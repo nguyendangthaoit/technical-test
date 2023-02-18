@@ -32,7 +32,7 @@ class App {
 
   public listen() {
 
-   this.app.listen(process.env.PORT, () => {
+    this.app.listen(process.env.PORT, () => {
       console.log(`App listening on the hostname:127.0.0.1  port ${process.env.PORT}`);
     });
   }
@@ -53,12 +53,13 @@ class App {
   }
 
   private connectToTheDatabase() {
-    // const {
-    //   DATABASE,
-    //   MONGO_PATH,
-    // } = process.env;
-    // mongoose.connect(MONGO_PATH + DATABASE, { useNewUrlParser: true, autoIndex: false, useUnifiedTopology: true });
+    const {
+      DATABASE,
+      MONGO_PATH,
+    } = process.env;
+    mongoose.connect(MONGO_PATH + DATABASE, { useNewUrlParser: true, autoIndex: false, useUnifiedTopology: true });
   }
+
 }
 
 export default App;

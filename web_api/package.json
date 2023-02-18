@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node ./src/server.ts",
+    "dev": "nodemon ./src/server.ts",
     "start": "nodemon ./dist/server.js",
     "prod": "npm run build && npm run start",
     "lint": "tslint -p tsconfig.json -c tslint.json",

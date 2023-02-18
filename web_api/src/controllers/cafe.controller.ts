@@ -3,9 +3,9 @@ import * as express from 'express';
 import { SendEmailHelper } from "../helper/sendEmailHelper";
 import * as multer from "multer";
 import { Email_Send_Subject } from '../utils/constans'
-import EmployeeService from './../services/employee.service';
+import CafeService from './../services/cafe.service';
 import validationMiddleware from "../middlewares/validation.middleware";
-import { EmployeeCreateVal } from "../validates/employee.validate";
+import { CafeCreateVal } from "../validates/cafe.validate";
 const upload = multer({
     dest: 'uploads/',
     fileFilter: (req, file, cb) => {
@@ -33,8 +33,8 @@ const upload = multer({
 class EmployeeController implements Controller {
 
     public router = express.Router();
-    public path = '/employee';
-    public employeeService = new EmployeeService();
+    public path = '/cafe';
+    public cafeService = new CafeService();
     constructor() {
         this.initializeRoutes();
     }
@@ -44,7 +44,7 @@ class EmployeeController implements Controller {
             .post(this.path + "/uploadImage", upload.single("image"), this.uploadImage)
             .get(this.path + '/getImage' + '/:image', this.getImage)
             .post(this.path + '/save', this.save)
-            .post(this.path + '/create',validationMiddleware(EmployeeCreateVal),  this.create)
+            .post(this.path + '/create',validationMiddleware(CafeCreateVal),  this.create)
     }
 
     private uploadImage = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
@@ -103,7 +103,7 @@ class EmployeeController implements Controller {
     private create = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
         try {
             console.log('2',request.body);
-            let result = await this.employeeService.create(request.body);
+            let result = await this.cafeService.create(request.body);
             response.send({
                 status: result,
             });
