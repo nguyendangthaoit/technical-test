@@ -4,7 +4,7 @@ export interface EmployeeInterface {
     email_address: string;
     phone_number: string;
     gender: string;
-    startedAt: Date
+    startedAt: Date;
     createdAt: Date;
     updatedAt: Date;
 }

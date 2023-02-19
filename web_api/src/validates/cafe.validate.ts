@@ -1,13 +1,8 @@
+
 import { IsDefined } from 'class-validator';
 
 
 export class CafeCreateVal {
-
-    @IsDefined({
-        message: "Id is required"
-    })
-    id: string;
-
 
     @IsDefined({
         message: "Name is required"
@@ -27,10 +22,10 @@ export class CafeCreateVal {
     location: string;
 }
 
+export class CafeUpdateVal extends CafeCreateVal {
 
-
-
-
-
-
-
+    @IsDefined({
+        message: "Id is required"
+    })
+    id: string;
+}

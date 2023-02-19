@@ -15,7 +15,7 @@ const CafeSchema = new mongoose.Schema({
             email_address: { type: String, trim: true, required: true },
             phone_number: { type: String, trim: true, required: true, length: 8 },
             gender: { type: String, enum: ['Male', 'Female'], trim: true, required: true, default: 'Male' },
-            startedAt: { type: Date, default: new Date() },
+            startedAt: { type: Date, default: new Date(), required: true },
             createdAt: { type: Date, default: new Date() },
             updatedAt: { type: Date, default: new Date() }
         }

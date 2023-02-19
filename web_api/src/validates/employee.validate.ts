@@ -1,19 +1,6 @@
 import { Length, IsDefined, Matches } from 'class-validator';
 
-
 export class EmployeeCreateVal {
-
-    @IsDefined({
-        message: "Id is required"
-    })
-    @Length(9, 9, {
-        message: "Id must have 9 alphanumeric"
-    })
-    @Matches(/^(UI)/, {
-        message: "Id must Starts with UI"
-    })
-    id: string;
-
 
     @IsDefined({
         message: "Name is required"
@@ -25,7 +12,7 @@ export class EmployeeCreateVal {
         message: "Email_address is required"
     })
     @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, {
-        message: "Email_address must Follows typical email address format"
+        message: "Email_address must follows typical email address format"
     })
     email_address: string;
 
@@ -45,9 +32,25 @@ export class EmployeeCreateVal {
     @IsDefined({
         message: "Gender is required"
     })
+    @Matches(/^(Male|Female)/, {
+        message: "Gender must be Male or Female"
+    })
     gender: string;
+
+
+    @IsDefined({
+        message: "Cafe is required"
+    })
+    cafe_id: string;
 }
 
+export class EmployeeUpdateVal extends EmployeeCreateVal {
+
+    @IsDefined({
+        message: "Id is required"
+    })
+    id: string;
+}
 
 
 
