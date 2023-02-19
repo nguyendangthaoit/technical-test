@@ -102,7 +102,6 @@ class EmployeeController implements Controller {
     }
     private create = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
         try {
-            console.log('2',request.body);
             let result = await this.cafeService.create(request.body);
             response.send({
                 status: result,
