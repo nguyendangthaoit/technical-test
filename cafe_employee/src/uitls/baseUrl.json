@@ -1,0 +1,6 @@
+{
+    "basedUrl": "http://localhost:3333/api/v1/",
+    "basedUrlPro": "http://localhost:3333/api/v1/",
+    "port": 0,
+    "isProSite": false
+}
