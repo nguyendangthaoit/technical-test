@@ -5,9 +5,10 @@ import { useDispatch } from 'react-redux';
 import { LOAD_CAFES_LOADING } from '../../uitls/constant'
 import { useSelector } from 'react-redux';
 import ImgRenderer from '../table/imgRenderer';
+import LinkRenderer from '../table/linkRenderer';
 import Filter from '../share/filter';
 import CafeModal from './modal';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import * as api from "../../service/cafe.service";
 import { toast } from 'react-toastify';
 import { hideLoad, showLoad } from './../../uitls/loading';
@@ -21,7 +22,7 @@ const Cafe = () => {
         { field: 'name' },
         { field: 'logo', cellRenderer: ImgRenderer },
         { field: 'description' },
-        { field: 'employees' },
+        { field: 'employees', cellRenderer: LinkRenderer },
         { field: 'location' }];
 
     useEffect(() => {

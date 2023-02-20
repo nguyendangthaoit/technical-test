@@ -5,9 +5,13 @@ import { MESSAGESERR } from '../../uitls/constant';
 import { toast } from 'react-toastify';
 import empImg from '../../asset/img/empty.jpg';
 import { showLoad, hideLoad } from '../../uitls/loading';
+import Textbox from '../share/textbox';
+import Textarea from '../share/textarea';
+import Swal from 'sweetalert2';
 export default function CafeModal(props) {
     const [fields, setFields] = useState({ ...Model });
     const [errors, setErrors] = useState({ ...Valid });
+    const [isSaved, setIsSaved] = useState(true);
 
     useEffect(() => {
         setErrors({ ...Valid });
@@ -33,11 +37,16 @@ export default function CafeModal(props) {
             }
         });
     }
-    const handleChange = (e, field) => {
+    const handleChange = (field, value, error) => {
         let fieldsT = { ...fields };
-        fieldsT[field] = e.target.value;
-        handleValidation(field, fieldsT);
+        fieldsT[field] = value;
         setFields(fieldsT);
+
+        let errorsT = { ...errors };
+        errorsT[error] = error;
+        setErrors(errorsT);
+
+        setIsSaved(false);
     }
     const save = async () => {
         if (handleValidation('', fields)) {
@@ -73,23 +82,59 @@ export default function CafeModal(props) {
     const handleChangeImage = (e) => {
         showLoad();
         const formData = new FormData();
-        formData.append("img", e.target.files[0]);
-        api.uploadImg(formData)
-            .then(res => {
-                hideLoad();
-                if (res.img_path) {
-                    let fieldsT = { ...fields };
-                    fieldsT['logo'] = res.img_path;
-                    setFields(fieldsT);
-                    toast.success('Uploaded successfully');
-                } else
-                    toast.warning(res.message);
-            }).catch((error) => {
-                hideLoad();
-                toast.warning("Uploaded unsuccessfully");
-            });
+        const file = e.target.files[0];
+
+        const isBigSize = (file) => {
+            const fsize = Math.round((file.size / 1024));
+            return fsize > 20 ? true : false;
+        };
+        if (isBigSize(file)) {
+            hideLoad();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Max 2mb validation',
+            })
+        } else {
+            formData.append("img", file);
+            api.uploadImg(formData)
+                .then(res => {
+                    hideLoad();
+                    if (res.img_path) {
+                        let fieldsT = { ...fields };
+                        fieldsT['logo'] = res.img_path;
+                        setFields(fieldsT);
+                        toast.success('Uploaded successfully');
+                    } else
+                        toast.warning(res.message);
+                }).catch((error) => {
+                    hideLoad();
+                    toast.warning("Uploaded unsuccessfully");
+                });
+        }
+
     }
 
+    const close = () => {
+        if (isSaved)
+            props.close();
+        else
+            Swal.fire({
+                title: 'Do you want to save the changes?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    save();
+                } else if (result.isDenied) {
+                    props.close();
+                }
+            })
+
+    }
     return (
         <>
             <div className="fade modal show" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ display: 'block' }}>
@@ -97,7 +142,7 @@ export default function CafeModal(props) {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h1 className="modal-title fs-5" id="exampleModalLabel">{props.item ? 'Update' : 'Add'}</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => props.close()}></button>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={close}></button>
                         </div>
                         <div className="modal-body">
                             <div className="row">
@@ -106,30 +151,22 @@ export default function CafeModal(props) {
                                     <img src={fields?.logo ? api.getImg(fields?.logo) : empImg} alt="logo" className="logo" onClick={addImage} />
                                     <input type="file" hidden id="fileInputImage" onChange={handleChangeImage} accept="image/*" />
                                 </div>
-                                <div className="col-lg-12 mb-3">
-                                    <label htmlFor="name" className="form-label required">Name</label>
-                                    <input type="text" className={`form-control ${!!errors.name && 'is-invalid'}`} name="name" id="name"
-                                        value={fields.name || ''} onChange={(e) => handleChange(e, 'name')} />
-                                    <div className="invalid-feedback">{errors.name}</div>
-                                </div>
-                                <div className="col-lg-12 mb-3">
-                                    <label htmlFor="description" className="form-label required">Description</label>
-                                    <textarea rows={2} type="text" className={`form-control ${!!errors.description && 'is-invalid'}`} name="description" id="description"
-                                        value={fields.description || ''} onChange={(e) => handleChange(e, 'description')} />
-                                    <div className="invalid-feedback">{errors.description}</div>
-                                </div>
-                                <div className="col-lg-12 mb-3">
-                                    <label htmlFor="location" className="form-label required">Location</label>
-                                    <input type="text" className={`form-control ${!!errors.location && 'is-invalid'}`} name="location" id="location"
-                                        value={fields.location || ''} onChange={(e) => handleChange(e, 'location')} />
-                                    <div className="invalid-feedback">{errors.location}</div>
-                                </div>
+
+                                <Textbox lable={'Name'} isRequired={true} field={'name'} value={fields.name} error={errors.name} minLength={6}
+                                    maxLength={10} onChange={handleChange} />
+
+                                <Textarea lable={'Description'} isRequired={true} field={'description'} value={fields.description} error={errors.description}
+                                    maxLength={256} row={2} onChange={handleChange} />
+
+                                <Textbox lable={'location'} isRequired={true} field={'location'} value={fields.location} error={errors.location}
+                                    onChange={handleChange} />
+
                             </div>
 
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-primary" onClick={save}>Save</button>
-                            <button type="button" className="btn btn-secondary" onClick={() => props.close()}>Cancel</button>
+                            <button type="button" className="btn btn-primary" onClick={save}>Submit </button>
+                            <button type="button" className="btn btn-secondary" onClick={close}>Cancel</button>
                         </div>
                     </div>
                 </div>
