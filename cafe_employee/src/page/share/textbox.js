@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 export default function Textbox({
     lable, isRequired, field, value, error,
-    onChange, minLength, maxLength }) {
+    onChange, minLength, maxLength, isNumber }) {
 
     const [valueT, setValueT] = useState(value);
     const [errorT, setErrorT] = useState(error);
@@ -18,9 +18,10 @@ export default function Textbox({
     }, [error])
 
     const handleChange = (e) => {
-        handleValidation(e.target.value);
+        const err = handleValidation(e.target.value);
         setValueT(e.target.value);
-        onChange(field, e.target.value, error);
+        setErrorT(err);
+        onChange(field, e.target.value, err);
     }
 
     const handleValidation = (value) => {
@@ -30,14 +31,32 @@ export default function Textbox({
 
         if (minLength && minLength > value.length)
             errMes = `Minimum ${minLength} character.`;
-        setErrorT(errMes);
-    }
 
+        if (field.includes('email') && value) {
+            const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+            const result = pattern.test(value);
+            if (!result) {
+                errMes = MESSAGESERR.email_required;
+            }
+        }
+        if (field.includes('phone') && value) {
+            const pattern = /^[89]/g;
+            const result = pattern.test(value);
+            if (!result) {
+                errMes = MESSAGESERR.phone_required;
+            }
+        }
+        return errMes;
+    }
+    const keyPressPhone = (e) => {
+        if (isNumber && (e.charCode < 48 || e.charCode > 57))
+            e.preventDefault();
+    }
     return (
         <div className="col-lg-12 mb-3">
             <label htmlFor={field} className={`form-label ${isRequired && 'required'}`}>{lable}</label>
             <input type="text" className={`form-control ${!!errorT && 'is-invalid'}`} name={field} id={field}
-                value={valueT || ''} onChange={(e) => handleChange(e)} maxLength={maxLength} />
+                value={valueT || ''} onChange={(e) => handleChange(e)} maxLength={maxLength} onKeyPress={keyPressPhone} />
             <div className="invalid-feedback">{errorT}</div>
         </div>
     );

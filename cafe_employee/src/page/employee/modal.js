@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Model, Valid } from "./model";
-import * as api from "../../service/cafe.service";
+import * as api from "../../service/employee.service";
 import { MESSAGESERR } from '../../uitls/constant';
 import { toast } from 'react-toastify';
-import empImg from '../../asset/img/empty.jpg';
 import { showLoad, hideLoad } from '../../uitls/loading';
 import Textbox from '../share/textbox';
-import Textarea from '../share/textarea';
 import Swal from 'sweetalert2';
-export default function CafeModal(props) {
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { LOAD_CAFES_LOADING } from '../../uitls/constant'
+export default function EmployeeModal(props) {
     const [fields, setFields] = useState({ ...Model });
     const [errors, setErrors] = useState({ ...Valid });
     const [isSaved, setIsSaved] = useState(true);
-
+    const dispatch = useDispatch();
+    const cafeReducer = useSelector(store => store.CafeReducer);
+    const genders = ['Male', 'Female'];
     useEffect(() => {
         setErrors({ ...Valid });
         if (props.item) {
@@ -20,6 +23,11 @@ export default function CafeModal(props) {
         } else
             setFields({ ...Model });
     }, [props.item])
+
+    useEffect(() => {
+        dispatch({ type: LOAD_CAFES_LOADING, payload: '' });
+    }, [])
+
 
     const handleValidation = (field, fieldsT) => {
         let errorsT = { ...errors };
@@ -48,10 +56,28 @@ export default function CafeModal(props) {
 
         setIsSaved(false);
     }
+
+
+    const onChange = (e, field) => {
+        let fieldsT = { ...fields };
+        fieldsT[field] = e.target.value;
+        handleValidation(field, fieldsT);
+        setFields(fieldsT);
+        setIsSaved(false);
+    }
+
+    const onRadioChange = (value) => {
+        let fieldsT = { ...fields };
+        fieldsT.gender = value;
+        handleValidation('gender', fieldsT);
+        setFields(fieldsT);
+        setIsSaved(false);
+    }
+
     const save = async () => {
         if (handleValidation('', fields)) {
             if (!props.item) {
-                await api.createCafe(fields).then(res => {
+                await api.createEmployee(fields).then(res => {
                     if (res.status) {
                         toast.success("Added successfully.");
                         props.close();
@@ -61,7 +87,7 @@ export default function CafeModal(props) {
                     toast.warning("Added unsuccessfully.");
                 });
             } else {
-                await api.updateCafe(fields).then(res => {
+                await api.updateEmployee(fields).then(res => {
                     if (res.status) {
                         toast.success("Saved successfully.");
                         props.close();
@@ -74,47 +100,6 @@ export default function CafeModal(props) {
         }
     };
 
-    const addImage = (e) => {
-        e.preventDefault();
-        const input = document.getElementById("fileInputImage");
-        input.click()
-    }
-    const handleChangeImage = (e) => {
-        showLoad();
-        const formData = new FormData();
-        const file = e.target.files[0];
-
-        const isBigSize = (file) => {
-            const fsize = Math.round((file.size / 1024));
-            return fsize > 2048 ? true : false;
-        };
-        if (isBigSize(file)) {
-            hideLoad();
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Max 2mb validation',
-            })
-        } else {
-            formData.append("img", file);
-            api.uploadImg(formData)
-                .then(res => {
-                    hideLoad();
-                    if (res.img_path) {
-                        let fieldsT = { ...fields };
-                        fieldsT['logo'] = res.img_path;
-                        setFields(fieldsT);
-                        setIsSaved(false);
-                        toast.success('Uploaded successfully');
-                    } else
-                        toast.warning(res.message);
-                }).catch((error) => {
-                    hideLoad();
-                    toast.warning("Uploaded unsuccessfully");
-                });
-        }
-
-    }
 
     const close = () => {
         if (isSaved)
@@ -147,21 +132,46 @@ export default function CafeModal(props) {
                         </div>
                         <div className="modal-body">
                             <div className="row">
-                                <div className="col-lg-12 mb-3">
-                                    <label htmlFor="name" className="form-label col-12 col-lg-4 ">Logo</label>
-                                    <img src={fields?.logo ? api.getImg(fields?.logo) : empImg} alt="logo" className="logo" onClick={addImage} />
-                                    <input type="file" hidden id="fileInputImage" onChange={handleChangeImage} accept="image/*" />
-                                </div>
 
                                 <Textbox lable={'Name'} isRequired={true} field={'name'} value={fields.name} error={errors.name} minLength={6}
                                     maxLength={10} onChange={handleChange} />
 
-                                <Textarea lable={'Description'} isRequired={true} field={'description'} value={fields.description} error={errors.description}
-                                    maxLength={256} row={2} onChange={handleChange} />
-
-                                <Textbox lable={'location'} isRequired={true} field={'location'} value={fields.location} error={errors.location}
+                                <Textbox lable={'Email Address'} isRequired={true} field={'email_address'} value={fields.email_address} error={errors.email_address}
                                     onChange={handleChange} />
 
+                                <Textbox lable={'Phone Number'} isRequired={true} field={'phone_number'} value={fields.phone_number} error={errors.phone_number}
+                                    isNumber={true} maxLength={8} minLength={8} onChange={handleChange} />
+
+
+                                <div className="col-lg-12 mb-3">
+                                    <label className="form-label required">Gender</label>
+                                    <div className="col-lg-12">
+                                        {
+                                            genders.map((item, i) =>
+                                                <div className="form-check form-check-inline" key={i}>
+                                                    <input className="form-check-input" type="radio" value={item}
+                                                        checked={fields.gender === item} onChange={() => onRadioChange(item)} />
+                                                    <label className="form-check-label" htmlFor="inlineRadio1">{item}</label>
+                                                </div>
+                                            )
+                                        }
+                                        <div className='errMes'>{errors.gender}</div>
+                                    </div>
+
+                                </div>
+                                <div className="col-lg-12 mb-3">
+                                    <label className="form-label required">Cafe</label>
+                                    <select className={`form-control ${!!errors.cafe_id && 'is-invalid'}`}
+                                        value={fields.cafe_id} onChange={(e) => onChange(e, 'cafe_id')}>
+                                        <option value="">Select Cafe</option>
+                                        {
+                                            cafeReducer.data.map((e, i) =>
+                                                <option value={e.id} key={i}>{e.name}</option>
+                                            )
+                                        }
+                                    </select>
+                                    <div className="invalid-feedback">{errors.cafe_id}</div>
+                                </div>
                             </div>
 
                         </div>

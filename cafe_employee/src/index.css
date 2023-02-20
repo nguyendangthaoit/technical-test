@@ -18,6 +18,11 @@ code {
   content: "*";
   color: Red;
 }
+.errMes {
+  color: #b02a37;
+  width: 100%;
+  font-size: .875em;
+}
 
 .logo {
   vertical-align: middle;

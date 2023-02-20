@@ -18,9 +18,10 @@ export default function Textarea({
     }, [error])
 
     const handleChange = (e) => {
-        handleValidation(e.target.value);
+        const err = handleValidation(e.target.value);
         setValueT(e.target.value);
-        onChange(field, e.target.value, error);
+        setErrorT(err);
+        onChange(field, e.target.value, err);
     }
 
     const handleValidation = (value) => {
@@ -30,7 +31,7 @@ export default function Textarea({
 
         if (minLength && minLength > value.length)
             errMes = `Minimum ${minLength} character.`;
-        setErrorT(errMes);
+        return errMes;
     }
 
     return (

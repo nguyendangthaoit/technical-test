@@ -13,6 +13,7 @@ const Table = ({
 }) => {
     columnDefs = [...columnDefs, {
         field: 'action',
+        maxWidth: 100,
         cellRenderer: BtnRenderer,
         cellRendererParams: {
             edit: data => onEdit(data),

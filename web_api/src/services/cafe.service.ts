@@ -54,7 +54,9 @@ class CafeService {
                     "name": "$employees.name",
                     "email_address": "$employees.email_address",
                     "phone_number": "$employees.phone_number",
+                    "gender": "$employees.gender",
                     "cafe": "$name",
+                    "cafe_id": "$id",
                     "days_worked": {
                         $trunc: {
                             $divide: [{ $subtract: [new Date(), "$employees.startedAt"] }, 1000 * 60 * 60 * 24]

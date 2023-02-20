@@ -11,9 +11,9 @@ export class EmployeeCreateVal {
     @IsDefined({
         message: "Email_address is required"
     })
-    @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, {
-        message: "Email_address must follows typical email address format"
-    })
+    // @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, {
+    //     message: "Email_address must follows typical format"
+    // })
     email_address: string;
 
 

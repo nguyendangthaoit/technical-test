@@ -1,0 +1,10 @@
+.row-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-card .card {
+  width: 40%;
+}
+/*# sourceMappingURL=home.css.map */
