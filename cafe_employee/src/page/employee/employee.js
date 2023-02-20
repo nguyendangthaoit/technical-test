@@ -11,13 +11,16 @@ import * as api from "../../service/employee.service";
 import { toast } from 'react-toastify';
 import { hideLoad, showLoad } from './../../uitls/loading';
 import './employee.scss';
-
+import { useSearchParams } from 'react-router-dom';
 const Employee = () => {
     const dispatch = useDispatch();
     const employeeReducer = useSelector(store => store.EmployeeReducer);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [itemEdit, setItemEdit] = useState(null);
     const [cafe, setCafe] = useState('');
+
+    const [searchParams] = useSearchParams();
+    const cafeParam = searchParams.get('cafe');
     const columnDefs = [
         { field: 'id', headerName: 'Employee id' },
         { field: 'name' },
@@ -27,8 +30,8 @@ const Employee = () => {
         { field: 'days_worked', headerName: 'Days worked in the café' }];
 
     useEffect(() => {
-        dispatch({ type: LOAD_EMPLOYEES_LOADING, payload: '' });
-    }, [])
+        dispatch({ type: LOAD_EMPLOYEES_LOADING, payload: cafeParam || '' });
+    }, [cafeParam])
 
     useEffect(() => {
         if (employeeReducer.loading) showLoad();
