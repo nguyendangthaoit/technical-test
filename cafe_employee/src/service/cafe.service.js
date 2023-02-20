@@ -15,7 +15,11 @@ export const updateCafe = async (obj) => {
 }
 
 export const delCafe = async (id) => {
-    return await api.get(`cafe/${id}`);
+    return await api.delete(`cafe/${id}`);
+}
+
+export const uploadImg = async (form) => {
+    return await api.post(`uploadImg`, form);
 }
 
 export const getImg = (file) => {
