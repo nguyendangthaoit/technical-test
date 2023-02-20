@@ -1,0 +1,13 @@
+::-webkit-input-placeholder {
+    /* Edge */
+    font-size: 1rem;
+}
+
+:-ms-input-placeholder {
+    /* Internet Explorer */
+    font-size: 1rem;
+}
+
+::placeholder {
+    font-size: 1rem;
+}

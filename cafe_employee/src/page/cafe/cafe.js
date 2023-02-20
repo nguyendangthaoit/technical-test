@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import * as api from "../../service/cafe.service";
 import { toast } from 'react-toastify';
 import { hideLoad, showLoad } from './../../uitls/loading';
+import './cafe.scss';
 const Cafe = () => {
     const dispatch = useDispatch();
     const cafeReducer = useSelector(store => store.CafeReducer);
@@ -19,8 +20,8 @@ const Cafe = () => {
     const [itemEdit, setItemEdit] = useState(null);
     const [location, setLocation] = useState('');
     const columnDefs = [
-        { field: 'name' },
         { field: 'logo', cellRenderer: ImgRenderer },
+        { field: 'name' },
         { field: 'description' },
         { field: 'employees', cellRenderer: LinkRenderer },
         { field: 'location' }];

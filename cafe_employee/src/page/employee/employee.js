@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import * as api from "../../service/employee.service";
 import { toast } from 'react-toastify';
 import { hideLoad, showLoad } from './../../uitls/loading';
+import './employee.scss';
 
 const Employee = () => {
     const dispatch = useDispatch();

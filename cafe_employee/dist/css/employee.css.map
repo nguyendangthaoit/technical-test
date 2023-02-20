@@ -1,6 +1,6 @@
 {
     "version": 3,
-    "mappings": "",
+    "mappings": "AAAA,AAAA,2BAA2B,CAAC;EACxB,UAAU;EACV,SAAS,EAAE,IAAI;CAClB;;AAED,AAAA,sBAAsB,CAAC;EACnB,uBAAuB;EACvB,SAAS,EAAE,IAAI;CAClB;;AAED,AAAA,aAAa,CAAC;EACV,SAAS,EAAE,IAAI;CAClB",
     "sources": [
         "../../src/page/employee/employee.scss"
     ],
