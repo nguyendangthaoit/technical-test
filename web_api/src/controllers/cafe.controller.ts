@@ -1,8 +1,6 @@
 import Controller from "interfaces/controller.interface";
 import * as express from 'express';
-import { SendEmailHelper } from "../helper/sendEmailHelper";
 import * as multer from "multer";
-import { Email_Send_Subject } from '../utils/constans'
 import CafeService from './../services/cafe.service';
 import validationMiddleware from "../middlewares/validation.middleware";
 import { CafeCreateVal, CafeUpdateVal } from "../validates/cafe.validate";
@@ -31,7 +29,7 @@ const upload = multer({
     })
 });
 
-class EmployeeController implements Controller {
+class CafeController implements Controller {
 
     public router = express.Router();
     public path = '';
@@ -45,13 +43,9 @@ class EmployeeController implements Controller {
             .post(this.path + "/uploadImg", upload.single("img"), this.uploadImg)
             .get(this.path + '/getImg' + '/:img', this.getImg)
             .get(this.path + '/cafes', this.getCafes)
-            .get(this.path + '/employees', this.getEmployees)
             .post(this.path + '/cafe', validationMiddleware(CafeCreateVal), this.createCafe)
-            .post(this.path + '/employee', validationMiddleware(EmployeeCreateVal), this.createEmployee)
             .put(this.path + '/cafe', validationMiddleware(CafeUpdateVal), this.updateCafe)
-            .put(this.path + '/employee', validationMiddleware(EmployeeUpdateVal), this.updateEmployee)
             .delete(this.path + '/cafe' + '/:id', this.delCafe)
-            .delete(this.path + '/employee' + '/:id', this.delEmployee)
     }
 
     private uploadImg = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
@@ -86,18 +80,6 @@ class EmployeeController implements Controller {
         }
     }
 
-    private getEmployees = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        try {
-            const employees = await this.cafeService.getEmployees(request.query);
-            response.send({
-                status: 200,
-                employees
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-
     private createCafe = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
         try {
             let result = await this.cafeService.createCafe(request.body);
@@ -109,18 +91,6 @@ class EmployeeController implements Controller {
             next(error);
         }
 
-    }
-
-    private createEmployee = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        try {
-            let result = await this.cafeService.createEmployee(request.body);
-            response.send({
-                status: result,
-            });
-
-        } catch (error) {
-            next(error);
-        }
     }
 
     private updateCafe = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
@@ -135,17 +105,6 @@ class EmployeeController implements Controller {
         }
     }
 
-    private updateEmployee = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        try {
-            let result = await this.cafeService.UpdateEmployee(request.body);
-            response.send({
-                status: result,
-            });
-
-        } catch (error) {
-            next(error);
-        }
-    }
     private delCafe = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
         try {
             let result = await this.cafeService.delCafe(request.params.id);
@@ -157,17 +116,6 @@ class EmployeeController implements Controller {
             next(error);
         }
     }
-    private delEmployee = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        try {
-            let result = await this.cafeService.delEmployee(request.params.id);
-            response.send({
-                status: result,
-            });
-
-        } catch (error) {
-            next(error);
-        }
-    }
 
 }
-export default EmployeeController;
+export default CafeController;
